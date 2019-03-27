@@ -1,3 +1,6 @@
+
+SignalEnergy = (trapz(abs(signal).^2))*(1/Fsampling);
+Eb = SignalEnergy/NbEncodedBit;
 %-------Symbol mapping and demapping-----
 
 %-------Nyquist Filter------------
@@ -11,3 +14,10 @@
 
 
 %-------AWGN----------------------
+
+%Noise Power
+N0 = Eb/EbN0;
+NoisePower = 2*N0*Fsampling;
+
+%Noise
+sqrt(NoisePower/2)*(randn(1,length(noise))+ 1i*randn(1,length(noise)));
