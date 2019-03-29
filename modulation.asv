@@ -1,0 +1,27 @@
+
+function signal_TX = TX(bit_tx, filter,Nbps, M)
+% This modulation uses the mapping function and an oversampling to 
+% make the convolution with an ideal filter.
+% INPUTS :
+% - bit_tx : vector of input bits 
+% - Nbps : number of bits per symbol
+% - M : Factor for oversampling
+% - fi
+
+% Creation of a random sequence of bits for the moment (row vector)
+bit_tx = randi([0 1],10000, 1);
+Nbps = 2; % Bit per symbol 
+% Upsampling factor 
+M = 4;
+
+% Digital modulation (use qam or pam => Depend of the Nbps)
+if Nbps > 1 
+    symb_tx = mapping(bit_tx, Nbps, 'qam');
+else 
+    symb_tx = mapping(bit_tx, Nbps, 'pam');
+end
+
+% Upsampling vector :
+up_symb_tx = upsample(symb_tx,M);
+
+

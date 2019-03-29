@@ -1,0 +1,6 @@
+clear all; close all; clc;
+Fsymbol = 1e6;
+beta = 0.3;
+RRCTaps = 133;
+Fsampling = 8e6;
+filter = RRCFter(beta,Fsymbol,Fsampling, RRCTaps);
