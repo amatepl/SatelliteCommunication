@@ -23,7 +23,7 @@ switch modulation,
         end
 
         % Binary to integer
-        int_tx = bi2de(fliplr(mapp_tx)); %converts a binary row vector to a nonnegative decimal integer. 
+        int_tx = bi2de(fliplr(mapp_tx)); %
 
         % Integer to symbol
         sigma = sqrt(sum(([0:2^Nbps-1]-(2^Nbps-1)/2).^2)/2^Nbps); 

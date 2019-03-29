@@ -2,7 +2,7 @@
 SignalEnergy = (trapz(abs(signal).^2))*(1/Fsampling);
 Eb = SignalEnergy/NbEncodedBit;
 %-------Encoder------------------
-
+%encoded_signal = mapping(bit_tx,Nbps,modulation);
 %--------------------------------
 %             |
 %             |
@@ -24,6 +24,10 @@ Eb = SignalEnergy/NbEncodedBit;
 % 1.
 % The sample rate fixes the bandwidth simulated in Matlab, that must be high
 % enough to simulate the halfroot Nyquist filtering.
+
+
+%filter = RRCFilter();
+%filtered_signal = conv(upsampled_signal,filter);
 %--------------------------------
 %             |
 %             |
@@ -43,7 +47,9 @@ sqrt(NoisePower/2)*(randn(1,length(noise))+ 1i*randn(1,length(noise)));
 %             |
 %             V
 %---------Root raised cosine filter-----------
+%filtered_signal = conv(noised_signal,filter);
 
+%  !!! DISCARD ADDITIONAL SAMPLES AFTER CONVOLUTION !!!
 %--------------------------------
 %             |
 %             |
@@ -57,3 +63,5 @@ sqrt(NoisePower/2)*(randn(1,length(noise))+ 1i*randn(1,length(noise)));
 %             |
 %             V
 %---------Decoder----------------
+
+%decoded_signal = demapping(symb_rx,Nbps,modulation);
