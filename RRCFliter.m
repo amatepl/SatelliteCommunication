@@ -41,7 +41,7 @@ H = complex(H);
 H = sqrt(H);
 
 %h = ifft(H,'symmetric');
-h = ifft(H);
+h = ifft(fftshift(H));
 h = ifftshift(h);
 %size(h)
 figure('Name','real h(t)');

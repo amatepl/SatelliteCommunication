@@ -19,6 +19,7 @@ H = [H,H1];
 interval_1_1 = freqGrid(abs(freqGrid)<= (1-beta)*Fsymbol/2 );
 H1 = ones(size(interval_1_1))/Fsymbol;
 H = [H,H1];
+%H = H1;
 
 interval_2_2 = freqGrid((1-beta)*Fsymbol/2 < abs(freqGrid) & abs(freqGrid)<= (1+beta)*Fsymbol/2 & freqGrid>0);
 H1 = (1 + cos(pi*(abs(interval_2_2)-(1-beta)*Fsymbol/2)/(Fsymbol*beta)))/(Fsymbol*2);
@@ -26,20 +27,14 @@ H = [H,H1];
 interval_3_2 = freqGrid(abs(freqGrid)> (1+beta)*Fsymbol/2  & freqGrid>=0);
 H1 = zeros(size(interval_3_2));
 H = [H,H1];
-H = complex(H);
-%H = H + zeros(size(H)).*1i;
 H = sqrt(H);
 
-%h = ifft(H,'symmetric');
-h = ifft(H);
+h = ifft(fftshift(H),'symmetric');
 h = ifftshift(h);
-%size(h)
-figure('Name','real h(t)');
-plot(t,h)
-%fvtool(h);
-h = abs(h)/max(abs(h));
+h = h/max(abs(h));
 figure('Name','h(t)');
 plot(t,h)
+%stem(t,h)
 figure('Name','H(f)');
 plot(freqGrid,H)
 grid on;
