@@ -9,8 +9,6 @@ Eb = SignalEnergy/NbEncodedBit;
 %             |
 %             V
 %-----------Upsampling------------
-
-%--------------------------------
 %             |
 %             |
 %             |
@@ -24,11 +22,8 @@ Eb = SignalEnergy/NbEncodedBit;
 % 1.
 % The sample rate fixes the bandwidth simulated in Matlab, that must be high
 % enough to simulate the halfroot Nyquist filtering.
-%--------------------------------
-%             |
-%             |
-%             |
-%             V
+
+
 %-------AWGN----------------------
 
 %Noise Power
@@ -37,23 +32,3 @@ NoisePower = 2*N0*Fsampling;
 
 %Noise
 sqrt(NoisePower/2)*(randn(1,length(noise))+ 1i*randn(1,length(noise)));
-%--------------------------------
-%             |
-%             |
-%             |
-%             V
-%---------Root raised cosine filter-----------
-
-%--------------------------------
-%             |
-%             |
-%             |
-%             V
-%--------Downsampling------------
-
-%--------------------------------
-%             |
-%             |
-%             |
-%             V
-%---------Decoder----------------
