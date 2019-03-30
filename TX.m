@@ -1,4 +1,3 @@
-
 function [symb_tx,signal_tx] = TX(bit_tx, filter,Nbps, M)
 % This modulation uses the mapping function and an oversampling to 
 % make the convolution with an ideal filter.

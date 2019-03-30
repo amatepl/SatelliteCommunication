@@ -25,26 +25,8 @@ filter = RRCFilter(beta,Fsymbol,Fsampling, RRCTaps).';
 % TX side :
 [symb_tx,signal_tx] = TX(bit_tx, filter,Nbps, M);
 % Add noise on the signal :
+signal_rx = noise(signal_tx, Eb_No,Fsampling,Nb);
 
-
-%SignalEnergy = (trapz(abs(signal).^2))*(1/Fsampling);
-%Eb = SignalEnergy/NbEncodedBit;
-
-%--------------------------------
-%             |
-%             |
-%             |
-%             V
-%-------AWGN----------------------
-
-% %Noise Power
-% N0 = Eb/EbN0;
-% NoisePower = 2*N0*Fsampling;
-% 
-% %Noise
-% sqrt(NoisePower/2)*(randn(1,length(noise))+ 1i*randn(1,length(noise)));
-
-%signal_noise = noise(signal_tx,Eb_No,Fsampling,Nb);
 %--------------------------------
 %             |
 %             |
