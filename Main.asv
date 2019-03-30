@@ -9,7 +9,7 @@ M = 4;
 
 Fsampling = M*2e6;
 
-Nb = 200000;
+Nb = 240000;
 
 % Creation of a random sequence of bits for the moment (row vector)
 bit_tx = randi([0 1],Nb, 1);
@@ -53,57 +53,31 @@ BER_up = zeros(1,length(Eb_No_dB));
 
 % Filter that is used :
 filter = RRCFilter(beta,Fsymbol,Fsampling, RRCTaps).';
-%signal_tx = conv(up_symb_tx,filter);
-%--------------------------------
-%             |
-%             |
-%             |
-%             V
-%-------AWGN----------------------
-
-% %Noise Power
-% N0 = Eb/EbN0;
-% NoisePower = 2*N0*Fsampling;
-% 
-% %Noise
-% sqrt(NoisePower/2)*(randn(1,length(noise))+ 1i*randn(1,length(noise)));
-
-%signal_noise = noise(signal_tx,Eb_No,Fsampling,Nb);
-%--------------------------------
-%             |
-%             |
-%             |
-%             V
-%---------Root raised cosine filter-----------
-%signal_rx1 = conv(signal_noise,filter);
-%signal_rx1 = conv(signal_tx,filter);
-%size(signal_rx)
-
-%  !!! DISCARD ADDITIONAL SAMPLES AFTER CONVOLUTION !!!
-%signal_rx = signal_rx1(RRCTaps+M-1:end-RRCTaps+M);
-%--------------------------------
-%             |
-%             |
-%             |
-%             V
-%--------Downsampling------------
-%down_signal_rx = downsample(signal_rx,M);
-%down_signal_rx1 = reshape(signal_rx,[],M);
-%down_signal_rx = mean(down_signal_rx1,2);
-%down_signal_rx = signal_rx1;
-%size(down_signal_rx)
-%--------------------------------
-%             |
-%             |
-%             |
-%             V
-%---------Decoder----------------
- %bit_rx = demapping(down_signal_rx,Nbps,'qam');
 
 
+% TX side :
+[symb_tx,signal_tx_kron,signal_tx_up] = TX(bit_tx, filter,Nbps, M);
+for i = 1:length(Eb_No_dB)
+    % Add noise on the signal :
+    signal_rx_kron = noise(signal_tx_kron, Eb_No_dB(i),Fsampling,Nb);
+    signal_rx_up = noise(signal_tx_up, Eb_No_dB(i),Fsampling,Nb);
+    % signal_rx_kron = signal_tx;
+    % signal_rx_up = signal_tx;
+    % RX side :
+    [symb_rx_kron,bit_rx_kron] = RX(signal_rx_kron, filter,Nbps, M, RRCTaps);
+    [symb_rx_up,bit_rx_up] = RX(signal_rx_up, filter,Nbps, M, RRCTaps);
+    errors_kron = abs(bit_rx_kron - bit_tx);
+    errors_up   = abs(bit_rx_up - bit_tx);
+    BER_kron(i) = sum(errors_kron)/2/Nb;
+    BER_up(i) = sum(errors_up)/2/Nb;
+end
+
+
+
+<<<<<<< HEAD
 %Eb_No_dB = 1:50/length(signal_tx_up):50;
 
-for Nbps = [1 2 4]
+for Nbps = [1 2 4 6]
     [symb_tx,signal_tx_up] = TX(bit_tx, filter,Nbps, M);
     BER_up = zeros(1,length(Eb_No_dB));
     for i = 1:length(Eb_No_dB)

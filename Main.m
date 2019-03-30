@@ -53,52 +53,10 @@ BER_up = zeros(1,length(Eb_No_dB));
 
 % Filter that is used :
 filter = RRCFilter(beta,Fsymbol,Fsampling, RRCTaps).';
-%signal_tx = conv(up_symb_tx,filter);
-%--------------------------------
-%             |
-%             |
-%             |
-%             V
-%-------AWGN----------------------
 
-% %Noise Power
-% N0 = Eb/EbN0;
-% NoisePower = 2*N0*Fsampling;
-% 
-% %Noise
-% sqrt(NoisePower/2)*(randn(1,length(noise))+ 1i*randn(1,length(noise)));
 
-%signal_noise = noise(signal_tx,Eb_No,Fsampling,Nb);
-%--------------------------------
-%             |
-%             |
-%             |
-%             V
-%---------Root raised cosine filter-----------
-%signal_rx1 = conv(signal_noise,filter);
-%signal_rx1 = conv(signal_tx,filter);
-%size(signal_rx)
+% TX side :
 
-%  !!! DISCARD ADDITIONAL SAMPLES AFTER CONVOLUTION !!!
-%signal_rx = signal_rx1(RRCTaps+M-1:end-RRCTaps+M);
-%--------------------------------
-%             |
-%             |
-%             |
-%             V
-%--------Downsampling------------
-%down_signal_rx = downsample(signal_rx,M);
-%down_signal_rx1 = reshape(signal_rx,[],M);
-%down_signal_rx = mean(down_signal_rx1,2);
-%down_signal_rx = signal_rx1;
-%size(down_signal_rx)
-%--------------------------------
-%             |
-%             |
-%             |
-%             V
-%---------Decoder----------------
- %bit_rx = demapping(down_signal_rx,Nbps,'qam');
 
 
 %Eb_No_dB = 1:50/length(signal_tx_up):50;
