@@ -1,7 +1,8 @@
 clear all; close all;clc;
 Fsymbol = 1e6;
 beta = 0.3;
-RRCTaps = 33;
+% !!! WE MUST HAVE ENOUGH TAPS,HOWEVER ERROR OCCURS EVEN WITHOUT NOISE !!!
+RRCTaps = 133;
 Fsampling = 4e6;
 Nb = 10000;
 
@@ -25,35 +26,10 @@ filter = RRCFilter(beta,Fsymbol,Fsampling, RRCTaps).';
 % TX side :
 [symb_tx,signal_tx] = TX(bit_tx, filter,Nbps, M);
 % Add noise on the signal :
-signal_rx = noise(signal_tx, Eb_No,Fsampling,Nb);
+% signal_rx = noise(signal_tx, Eb_No,Fsampling,Nb);
+signal_rx = signal_tx;
+% RX side :
+[symb_rx,bit_rx] = RX(signal_rx, filter,Nbps, M, RRCTaps);
 
-%--------------------------------
-%             |
-%             |
-%             |
-%             V
-%---------Root raised cosine filter-----------
-%signal_rx = conv(signal_noise,filter);
-signal_rx1 = conv(signal_tx,filter);
-%size(signal_rx)
-
-%  !!! DISCARD ADDITIONAL SAMPLES AFTER CONVOLUTION !!!
-signal_rx = signal_rx1(RRCTaps+M-1:end-RRCTaps+M);
-%--------------------------------
-%             |
-%             |
-%             |
-%             V
-%--------Downsampling------------
-down_signal_rx = downsample(signal_rx,M);
-%down_signal_rx = signal_rx1;
-%size(down_signal_rx)
-%--------------------------------
-%             |
-%             |
-%             |
-%             V
-%---------Decoder----------------
-bit_rx = demapping(down_signal_rx,Nbps,'qam');
 errors = abs(bit_rx - bit_tx);
 sum(errors)
