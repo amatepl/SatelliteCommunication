@@ -31,7 +31,8 @@ for i = 1:length(Eb_No_dB)
     % Add noise on the signal :
     signal_rx_kron = noise(signal_tx_kron, Eb_No_dB(i),Fsampling,Nb);
     signal_rx_up = noise(signal_tx_up, Eb_No_dB(i),Fsampling,Nb);
-    % signal_rx = signal_tx;
+    % signal_rx_kron = signal_tx;
+    % signal_rx_up = signal_tx;
     % RX side :
     [symb_rx_kron,bit_rx_kron] = RX(signal_rx_kron, filter,Nbps, M, RRCTaps);
     [symb_rx_up,bit_rx_up] = RX(signal_rx_up, filter,Nbps, M, RRCTaps);
@@ -49,4 +50,12 @@ title('BER of an ideal channel in satellite communication with AWGN');
 legend('kronecker','upsample');
 xlabel('Eb/N0 (dB)');
 ylabel('BER');
+
+figure(4);
+plot(symb_rx_up, 'o');
+title('symbol at receiver with upsample');
+
+figure(5);
+plot(symb_rx_kron, 'o');
+title('symbol at receiver with kronecker');
 
