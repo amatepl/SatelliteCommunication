@@ -1,4 +1,4 @@
-function signal_rx = noise(signal_tx,Eb_No,Fsampling,Nb)
+function signal_rx = noise(signal_tx,Eb_No_dB,Fsampling,Nb)
 % Add an additive Gaussian White noise (AWGN) on the signal inside the
 % channel.
 % INPUTS :
@@ -9,6 +9,7 @@ function signal_rx = noise(signal_tx,Eb_No,Fsampling,Nb)
 % - Nb : Number of bits
 % OUTPUTS :
 % - signal_rx : signal which arrives at the receiver
+Eb_No = 10^(Eb_No_dB/10);
 signal_energy = (trapz(abs(signal_tx).^2))*(1/Fsampling);
 Eb = signal_energy/Nb;
 Eb = Eb/2;

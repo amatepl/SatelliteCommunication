@@ -7,6 +7,10 @@ function [h] = RRCFilter(beta,Fsymbol,Fsampling, RRCTaps)
 % Nsps - Number of samples per symbol
 % RCCTaps - Number of taps
 % Delta_t - time resolution (1/Fsampling)
+% beta = 0.3;
+% Fsymbol = 2e6;
+% Fsampling = 4*2e6;
+% RRCTaps = 33;
 
 T = 1/Fsymbol;
 
@@ -42,12 +46,9 @@ h = ifft(fftshift(H),'symmetric');
 h = ifftshift(h);
 h = h/max(abs(h));
 size(h);
-% figure('Name','h(t)');
-% plot(t,h)
+figure('Name','h(t)');
+plot(t,h)
 %stem(t,h)
-% figure('Name','H(f)');
-% plot(freqGrid,H)
+figure('Name','H(f)');
+plot(freqGrid,H)
 %grid on;
-
-
-

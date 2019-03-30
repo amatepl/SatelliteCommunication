@@ -13,8 +13,8 @@ Nbps = 2; % Bit per symbol
 M = Fsampling/Fsymbol;
 
 Eb_No_dB = [1:1:50];
-BER_kron = zeros(1,length(Eb_No_dB));
-BER_up = zeros(1,length(Eb_No_dB));
+BER_down = zeros(1,length(Eb_No_dB));
+BER_mean = zeros(1,length(Eb_No_dB));
 
 % 1 MHz cutoff fre-quency
 % 0.3 roll-off factor  
@@ -33,20 +33,15 @@ for i = 1:length(Eb_No_dB)
     signal_rx_up = noise(signal_tx_up, Eb_No_dB(i),Fsampling,Nb);
     % signal_rx = signal_tx;
     % RX side :
-    [symb_rx_kron,bit_rx_kron] = RX(signal_rx_kron, filter,Nbps, M, RRCTaps);
-    [symb_rx_up,bit_rx_up] = RX(signal_rx_up, filter,Nbps, M, RRCTaps);
-    errors_kron = abs(bit_rx_kron - bit_tx);
-    errors_up   = abs(bit_rx_up - bit_tx);
-    BER_kron(i) = sum(errors_kron)/2/Nb;
-    BER_up(i) = sum(errors_up)/2/Nb;
+    [symb_rx_kron,bit_rx_down] = RX(signal_rx_kron, filter,Nbps, M, RRCTaps);
+    errors_down = abs(bit_rx_down - bit_tx);
+    % errors_mean = abs(bit_rx_mean - bit_tx);
+    % BER_mean(i) = sum(errors_mean)/2/Nb;
+    BER_down(i) = sum(errors_down)/2/Nb;
 end
 
-figure(3);
-semilogy(Eb_No_dB, BER_kron);
-hold on;
-semilogy(Eb_No_dB, BER_up);
-title('BER of an ideal channel in satellite communication with AWGN');
-legend('kronecker','upsample');
+semilogy(Eb_No_dB, BER_down);
+legend('upsample');
 xlabel('Eb/N0 (dB)');
 ylabel('BER');
 
