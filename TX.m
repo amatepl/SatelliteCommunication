@@ -1,4 +1,4 @@
-function [symb_tx,signal_tx] = TX(bit_tx, filter,Nbps, M)
+function [symb_tx,signal_tx_up] = TX(bit_tx, filter,Nbps, M)
 % This modulation uses the mapping function and an oversampling to 
 % make the convolution with an ideal filter.
 % INPUTS :
@@ -25,7 +25,7 @@ end
 %% -----------------Upsampling----------------
 % Upsampling vector :
 % M times the same sample of symb_tx
-up_symb_tx = kron(symb_tx,ones([M 1]));
+up_symb_tx_up = upsample(symb_tx,M);
 %---------------------------------------------
 %                       |
 %                       |
@@ -33,7 +33,7 @@ up_symb_tx = kron(symb_tx,ones([M 1]));
 %                       V
 %% -----------------Filtering-----------------
 % Convolution :
-signal_tx = conv(up_symb_tx,filter);
+signal_tx_up = conv(up_symb_tx_up,filter);
 end
 
 

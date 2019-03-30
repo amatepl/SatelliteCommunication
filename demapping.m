@@ -19,9 +19,14 @@ switch modulation,
         int_rx = sigma * symb_rx + (2^Nbps-1)/2;
 
         % Integer detection
-        int_det = round(int_rx);
-        int_det(find(int_det<0)) = 0;
-        int_det(find(int_det>2^Nbps-1)) = 2^Nbps-1;
+        
+        % !!!!!!!!!!!!      I DON'T KNOW IF IT IS CORRECT, I ONLY TAKE THE
+        % REAL PART OF THE SIGNAL !!!!!!!!!!!!!!!!!!
+        int_det = round(real(int_rx));
+%         int_det(find(int_det<0)) = 0;
+%         int_det(find(int_det>2^Nbps-1)) = 2^Nbps-1;
+        int_det(int_det<0) = 0;
+        int_det(int_det>2^Nbps-1) = 2^Nbps-1;
 
         % Integer to binary
         mapp_rx  = fliplr(de2bi(int_det));

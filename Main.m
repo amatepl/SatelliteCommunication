@@ -9,19 +9,20 @@ M = 4;
 
 Fsampling = M*2e6;
 
-Nb = 10000;
+Nb = 240000;
 
 % Creation of a random sequence of bits for the moment (row vector)
 bit_tx = randi([0 1],Nb, 1);
 Nbps = 2; % Bit per symbol 
 
-Eb_No = 2;
+Eb_No_dB = 1:1:50;
+BER_up = zeros(1,length(Eb_No_dB));
 
 %SignalEnergy = (trapz(abs(signal).^2))*(1/Fsampling);
 %Eb = SignalEnergy/NbEncodedBit;
 
 %-------Encoder------------------
-symb_tx = mapping(bit_tx, Nbps, 'qam');
+%symb_tx = mapping(bit_tx, Nbps, 'qam');
 %size(symb_tx)
 %--------------------------------
 %             |
@@ -31,7 +32,7 @@ symb_tx = mapping(bit_tx, Nbps, 'qam');
 %-----------Upsampling------------
 
 
-up_symb_tx = upsample(symb_tx,M);
+%up_symb_tx = upsample(symb_tx,M);
 
 %up_symb_tx = kron(symb_tx,ones([M 1]));
 %size(up_symb_tx);
@@ -52,7 +53,7 @@ up_symb_tx = upsample(symb_tx,M);
 
 % Filter that is used :
 filter = RRCFilter(beta,Fsymbol,Fsampling, RRCTaps).';
-signal_tx = conv(up_symb_tx,filter);
+%signal_tx = conv(up_symb_tx,filter);
 %--------------------------------
 %             |
 %             |
@@ -75,18 +76,18 @@ signal_tx = conv(up_symb_tx,filter);
 %             V
 %---------Root raised cosine filter-----------
 %signal_rx1 = conv(signal_noise,filter);
-signal_rx1 = conv(signal_tx,filter);
+%signal_rx1 = conv(signal_tx,filter);
 %size(signal_rx)
 
 %  !!! DISCARD ADDITIONAL SAMPLES AFTER CONVOLUTION !!!
-signal_rx = signal_rx1(RRCTaps+M-1:end-RRCTaps+M);
+%signal_rx = signal_rx1(RRCTaps+M-1:end-RRCTaps+M);
 %--------------------------------
 %             |
 %             |
 %             |
 %             V
 %--------Downsampling------------
-down_signal_rx = downsample(signal_rx,M);
+%down_signal_rx = downsample(signal_rx,M);
 %down_signal_rx1 = reshape(signal_rx,[],M);
 %down_signal_rx = mean(down_signal_rx1,2);
 %down_signal_rx = signal_rx1;
@@ -97,16 +98,40 @@ down_signal_rx = downsample(signal_rx,M);
 %             |
 %             V
 %---------Decoder----------------
- bit_rx = demapping(down_signal_rx,Nbps,'qam');
-% =======
-% TX side :
-%[symb_tx,signal_tx] = TX(bit_tx, filter,Nbps, M);
-% Add noise on the signal :
-% signal_rx = noise(signal_tx, Eb_No,Fsampling,Nb);
-%signal_rx = signal_tx;
-% RX side :
-%[symb_rx,bit_rx] = RX(signal_rx, filter,Nbps, M, RRCTaps);
+ %bit_rx = demapping(down_signal_rx,Nbps,'qam');
 
-%>>>>>>> 7ac86e6679ef8356bca7cf12c3419f282be1ff2b
-errors = abs(bit_rx - bit_tx);
-sum(errors)
+
+%Eb_No_dB = 1:50/length(signal_tx_up):50;
+
+for Nbps = [1 2 4 6]
+    [symb_tx,signal_tx_up] = TX(bit_tx, filter,Nbps, M);
+    BER_up = zeros(1,length(Eb_No_dB));
+    for i = 1:length(Eb_No_dB)
+        % Add noise on the signal :
+        signal_rx_up = noise(signal_tx_up, Eb_No_dB(i),Fsampling,Nb);
+
+        % signal_rx = signal_tx;
+        % RX side :
+
+        [symb_rx_up,bit_rx_up] = RX(signal_rx_up, filter,Nbps, M, RRCTaps);
+        errors_up   = abs(bit_rx_up - bit_tx);
+        BER_up(i) = sum(errors_up)/2/Nb;
+    end
+    figure(3);
+    % semilogy(Eb_No_dB, BER_kron);
+    % hold on;
+    semilogy(Eb_No_dB, BER_up);
+    hold on;
+    title('BER of an ideal channel in satellite communication with AWGN');
+    legend('BPSK','QPSK','16QUAM','64QUAM');
+    xlabel('Eb/N0 (dB)');
+    ylabel('BER');
+end
+% figure(3);
+% % semilogy(Eb_No_dB, BER_kron);
+% % hold on;
+% semilogy(Eb_No_dB, BER_up);
+% title('BER of an ideal channel in satellite communication with AWGN');
+% legend('upsample');
+% xlabel('Eb/N0 (dB)');
+% ylabel('BER');

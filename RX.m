@@ -23,6 +23,7 @@ up_symb_rx = up_symb_rx(RRCTaps+M-1:end-RRCTaps+M);
 %                      |
 %                      V
 %% ---------------Downsampling----------------
+
 symb_rx = downsample(up_symb_rx,M);
 %---------------------------------------------
 %                      |
@@ -33,6 +34,6 @@ symb_rx = downsample(up_symb_rx,M);
 if Nbps > 1 
     bit_rx = demapping(symb_rx, Nbps, 'qam');
 else 
-    bit_rx = mapping(symb_rx, Nbps, 'pam');
+    bit_rx = demapping(symb_rx, Nbps, 'pam');
 end
 end
