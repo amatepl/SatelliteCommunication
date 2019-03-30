@@ -29,7 +29,7 @@ symb_tx = mapping(bit_tx, Nbps, 'qam');
 %-----------Upsampling------------
 
 % !!!!!!!!!!!!!!! FALSE !!!!!!!!!!!!
-up_symb_tx = upsample(symb_tx,M);
+%up_symb_tx = upsample(symb_tx,M);
 % !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 %up_symb_tx = kron(symb_tx,ones([M 1]));
 %size(up_symb_tx);
@@ -65,15 +65,15 @@ signal_tx = conv(up_symb_tx,filter);
 % %Noise
 % sqrt(NoisePower/2)*(randn(1,length(noise))+ 1i*randn(1,length(noise)));
 
-%signal_noise = noise(signal_tx,Eb_No,Fsampling,Nb);
+signal_noise = noise(signal_tx,Eb_No,Fsampling,Nb);
 %--------------------------------
 %             |
 %             |
 %             |
 %             V
 %---------Root raised cosine filter-----------
-%signal_rx1 = conv(signal_noise,filter);
-signal_rx1 = conv(signal_tx,filter);
+signal_rx1 = conv(signal_noise,filter);
+%signal_rx1 = conv(signal_tx,filter);
 %size(signal_rx)
 
 %  !!! DISCARD ADDITIONAL SAMPLES AFTER CONVOLUTION !!!
@@ -84,9 +84,10 @@ signal_rx = signal_rx1(RRCTaps+M-1:end-RRCTaps+M);
 %             |
 %             V
 %--------Downsampling------------
-down_signal_rx = downsample(signal_rx,M);
-%down_signal_rx1 = reshape(signal_rx,[],M);
-%down_signal_rx = mean(down_signal_rx1,2);
+%down_signal_rx = downsample(signal_rx,M);
+down_signal_rx1 = reshape(signal_rx,[],M);
+%size(down_signal_rx);
+down_signal_rx = mean(down_signal_rx1,2);
 %down_signal_rx = signal_rx1;
 %size(down_signal_rx)
 %--------------------------------
