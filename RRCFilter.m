@@ -41,12 +41,13 @@ H = sqrt(H/T);
 h = ifft(fftshift(H),'symmetric');
 h = ifftshift(h);
 h = h/max(abs(h));
-figure('Name','h(t)');
-plot(t,h)
+size(h);
+% figure('Name','h(t)');
+% plot(t,h)
 %stem(t,h)
-figure('Name','H(f)');
-plot(freqGrid,H)
-grid on;
+% figure('Name','H(f)');
+% plot(freqGrid,H)
+%grid on;
 
 
 
