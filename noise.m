@@ -1,4 +1,5 @@
-function signal_noise = noise(signal_tx,Eb_No,Fsampling,Nb)
+function signal_rx = noise(signal_tx,Eb_No,Fsampling,Nb)
+
 signal_energy = (trapz(abs(signal_tx).^2))*(1/Fsampling);
 Eb = signal_energy/Nb;
 Eb = Eb/2;

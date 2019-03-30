@@ -9,35 +9,9 @@ Nb = 10000;
 bit_tx = randi([0 1],Nb, 1);
 Nbps = 2; % Bit per symbol 
 % Upsampling factor 
-M = 4;
+M = Fsampling/Fsymbol;
 
 Eb_No = 2;
-
-%SignalEnergy = (trapz(abs(signal).^2))*(1/Fsampling);
-%Eb = SignalEnergy/NbEncodedBit;
-
-%-------Encoder------------------
-symb_tx = mapping(bit_tx, Nbps, 'qam');
-%size(symb_tx)
-%--------------------------------
-%             |
-%             |
-%             |
-%             V
-%-----------Upsampling------------
-
-% !!!!!!!!!!!!!!! FALSE !!!!!!!!!!!!
-%up_symb_tx = upsample(symb_tx,M);
-% !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-up_symb_tx = kron(symb_tx,ones([M 1]));
-%size(up_symb_tx);
-%--------------------------------
-%             |
-%             |
-%             |
-%             V
-
-%-------Nyquist Filter------------
 
 % 1 MHz cutoff fre-quency
 % 0.3 roll-off factor  
@@ -46,9 +20,16 @@ up_symb_tx = kron(symb_tx,ones([M 1]));
 % The sample rate fixes the bandwidth simulated in Matlab, that must be high
 % enough to simulate the halfroot Nyquist filtering.
 
-
+% Filter that is used :
 filter = RRCFilter(beta,Fsymbol,Fsampling, RRCTaps).';
-signal_tx = conv(up_symb_tx,filter);
+% TX side :
+[symb_tx,signal_tx] = TX(bit_tx, filter,Nbps, M);
+% Add noise on the signal :
+
+
+%SignalEnergy = (trapz(abs(signal).^2))*(1/Fsampling);
+%Eb = SignalEnergy/NbEncodedBit;
+
 %--------------------------------
 %             |
 %             |
