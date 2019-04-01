@@ -15,5 +15,12 @@ Eb = signal_energy/Nb;
 Eb = Eb/2;
 No = Eb./Eb_No;
 noise_power = 2*No*Fsampling;
-noise = sqrt(noise_power/2).*(randn(length(signal_tx),1)+1i*randn(length(signal_tx),1));
+%noise_power = kron(noise_power,ones(length(signal_tx),1));
+
+noise = randn(length(signal_tx),1)+1i*randn(length(signal_tx),1);
+%noise = kron(noise,ones([1,length(No)]));
+
+noise = sqrt(noise_power./2).*noise;
+
+signal_tx = kron(signal_tx,ones(1,length(No)));
 signal_rx = signal_tx + noise;

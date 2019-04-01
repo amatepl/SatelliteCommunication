@@ -14,9 +14,12 @@ function [symb_rx,bit_rx] = RX(signal_rx, filter,Nbps, M, RRCTaps)
 
 %% -----------------Filtering-----------------
 % Convolution :
-up_symb_rx = conv(signal_rx,filter);
+up_symb_rx = conv(signal_rx,filter','full');
+%up_symb_rx = signal_rx;
 % Discard additional samples after convolution
-up_symb_rx = up_symb_rx(RRCTaps+M-1:end-RRCTaps+M);
+%up_symb_rx = up_symb_rx(RRCTaps + M -1:end-RRCTaps + M);
+up_symb_rx = up_symb_rx(RRCTaps:end-RRCTaps+1);
+%up_symb_rx = up_symb_rx(:);
 %---------------------------------------------
 %                      |
 %                      |

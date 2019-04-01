@@ -2,24 +2,18 @@ clear all; close all;clc;
 Fsymbol = 2e6;
 beta = 0.3;
 % !!! WE MUST HAVE ENOUGH TAPS,HOWEVER ERROR OCCURS EVEN WITHOUT NOISE !!!
-RRCTaps = 133;
+RRCTaps = 131;
 
 % Upsampling factor 
 M = 4;
 
 Fsampling = M*2e6;
 
-Nb = 240000;
+Nb = 120000;
 
 % Creation of a random sequence of bits for the moment (row vector)
 bit_tx = randi([0 1],Nb, 1);
-Nbps = 2; % Bit per symbol 
-
 Eb_No_dB = 1:1:50;
-BER_up = zeros(1,length(Eb_No_dB));
-
-%SignalEnergy = (trapz(abs(signal).^2))*(1/Fsampling);
-%Eb = SignalEnergy/NbEncodedBit;
 
 %-------Encoder------------------
 %symb_tx = mapping(bit_tx, Nbps, 'qam');
@@ -52,33 +46,24 @@ BER_up = zeros(1,length(Eb_No_dB));
 % enough to simulate the halfroot Nyquist filtering.
 
 % Filter that is used :
-filter = RRCFilter(beta,Fsymbol,Fsampling, RRCTaps).';
-
+%filter = RRCFilter(beta,Fsymbol,Fsampling, RRCTaps).';
+filter = RRCFilter(beta,Fsymbol,Fsampling, RRCTaps);
 
 % TX side :
-[symb_tx,signal_tx_kron,signal_tx_up] = TX(bit_tx, filter,Nbps, M);
-for i = 1:length(Eb_No_dB)
-    % Add noise on the signal :
-    signal_rx_kron = noise(signal_tx_kron, Eb_No_dB(i),Fsampling,Nb);
-    signal_rx_up = noise(signal_tx_up, Eb_No_dB(i),Fsampling,Nb);
-    % signal_rx_kron = signal_tx;
-    % signal_rx_up = signal_tx;
-    % RX side :
-    [symb_rx_kron,bit_rx_kron] = RX(signal_rx_kron, filter,Nbps, M, RRCTaps);
-    [symb_rx_up,bit_rx_up] = RX(signal_rx_up, filter,Nbps, M, RRCTaps);
-    errors_kron = abs(bit_rx_kron - bit_tx);
-    errors_up   = abs(bit_rx_up - bit_tx);
-    BER_kron(i) = sum(errors_kron)/2/Nb;
-    BER_up(i) = sum(errors_up)/2/Nb;
-end
 
 
 
-<<<<<<< HEAD
 %Eb_No_dB = 1:50/length(signal_tx_up):50;
 
-for Nbps = [1 2 4 6]
+%for Nbps = [1 2 4 6]
+Nbps = 4;
     [symb_tx,signal_tx_up] = TX(bit_tx, filter,Nbps, M);
+    %scatter(real(signal_tx_up),imag(signal_tx_up));
+    figure('Name','16QAM')
+    subplot(2,2,1);
+    scatter(real(symb_tx),imag(symb_tx));
+    subplot(2,2,2);
+    scatter(real(signal_tx_up),imag(signal_tx_up));
     BER_up = zeros(1,length(Eb_No_dB));
     for i = 1:length(Eb_No_dB)
         % Add noise on the signal :
@@ -87,20 +72,25 @@ for Nbps = [1 2 4 6]
         % signal_rx = signal_tx;
         % RX side :
 
-        [symb_rx_up,bit_rx_up] = RX(signal_rx_up, filter,Nbps, M, RRCTaps);
-        errors_up   = abs(bit_rx_up - bit_tx);
+        [symb_rx_up,bit_rx_up] = RX(signal_tx_up, filter,Nbps, M, RRCTaps);
+        subplot(2,2,3);
+        scatter(real(symb_rx_up),imag(symb_rx_up));
+        errors_up = abs(bit_rx_up - bit_tx);
         BER_up(i) = sum(errors_up)/2/Nb;
     end
+%    sum(errors_up)
+%     signal_rx_up = noise(signal_tx_up, Eb_No_dB,Fsampling,Nb);
+%     [symb_rx_up,bit_rx_up] = RX(signal_rx_up, filter,Nbps, M, RRCTaps);
+%     errors_up   = abs(bit_rx_up - bit_tx);
+%     BER_up = sum(errors_up)/2/Nb;
     figure(3);
-    % semilogy(Eb_No_dB, BER_kron);
-    % hold on;
     semilogy(Eb_No_dB, BER_up);
     hold on;
     title('BER of an ideal channel in satellite communication with AWGN');
     legend('BPSK','QPSK','16QUAM','64QUAM');
     xlabel('Eb/N0 (dB)');
     ylabel('BER');
-end
+%end
 % figure(3);
 % % semilogy(Eb_No_dB, BER_kron);
 % % hold on;

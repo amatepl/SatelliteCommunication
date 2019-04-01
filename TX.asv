@@ -33,7 +33,7 @@ up_symb_tx_up = upsample(symb_tx,M);
 %                       V
 %% -----------------Filtering-----------------
 % Convolution :
-signal_tx_up = conv(up_symb_tx_up,filter,'full');
+signal_tx_up = conv(up_symb_tx_up,filter);
 %signal_tx_up = up_symb_tx_up;
 end
 

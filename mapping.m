@@ -71,6 +71,6 @@ switch modulation,
        
         
         % COMPLEX SYMBOL
-        symb_tx = symb_txI + j*symb_txQ;
+        symb_tx = symb_txI + 1i*symb_txQ;
        
 end
