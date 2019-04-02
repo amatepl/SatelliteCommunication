@@ -1,55 +1,24 @@
 clear all; close all;clc;
-Fsymbol = 2e6;
-beta = 0.3;
-% !!! WE MUST HAVE ENOUGH TAPS,HOWEVER ERROR OCCURS EVEN WITHOUT NOISE !!!
-RRCTaps = 131;
-
-% Upsampling factor 
-M = 4;
-
-Fsampling = M*2e6;
-
-Nb = 120000;
-
-% Creation of a random sequence of bits for the moment (row vector)
-bit_tx = randi([0 1],Nb, 1);
-Eb_No_dB = 1:1:50;
-
-%-------Encoder------------------
-%symb_tx = mapping(bit_tx, Nbps, 'qam');
-%size(symb_tx)
-%--------------------------------
-%             |
-%             |
-%             |
-%             V
-%-----------Upsampling------------
-
-
-%up_symb_tx = upsample(symb_tx,M);
-
-%up_symb_tx = kron(symb_tx,ones([M 1]));
-%size(up_symb_tx);
-%--------------------------------
-%             |
-%             |
-%             |
-%             V
-
-%-------Nyquist Filter------------
-
 % 1 MHz cutoff fre-quency
 % 0.3 roll-off factor  
 % Before filtering, the symbol sequence is over-sampled with a factor M >
 % 1.
 % The sample rate fixes the bandwidth simulated in Matlab, that must be high
 % enough to simulate the halfroot Nyquist filtering.
+Fsymbol = 2e6;
+beta = 0.3;
+% !!! WE MUST HAVE ENOUGH TAPS,HOWEVER ERROR OCCURS EVEN WITHOUT NOISE !!!
+RRCTaps = 155;
+% Upsampling factor 
+M = 4;
+Fsampling = M*Fsymbol;
+Nb = 120000;
+% Creation of a random sequence of bits for the moment (row vector)
+bit_tx = randi([0 1],Nb, 1);
+Eb_No_dB = 1:1:17;
 
 % Filter that is used :
-%filter = RRCFilter(beta,Fsymbol,Fsampling, RRCTaps).';
 filter = RRCFilter(beta,Fsymbol,Fsampling, RRCTaps);
-
-
 
 for Nbps = [1 2 4 6]
     % TX side :
