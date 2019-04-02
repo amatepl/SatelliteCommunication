@@ -1,17 +1,12 @@
 function [h] = RRCFilter(beta,Fsymbol,Fsampling, RRCTaps)
-
-% beta - roll-off factor
-% Fsymbol - symbol frequency
-% Fsampling - sampling frequency
-% Nss - Number of symbols
-% Nsps - Number of samples per symbol
-% RCCTaps - Number of taps
-% Delta_t - time resolution (1/Fsampling)
-% beta = 0.3;
-% Fsymbol = 2e6;
-% Fsampling = 4*2e6;
-% RRCTaps = 33;
-
+% Root raised cosine filter :
+% INPUTS :
+% - beta : roll-off factor
+% - Fsymbol : symbol frequency
+% - Fsampling : sampling frequency
+% - RCCTaps : Number of taps
+% OUTPUTS :
+% - h : the normalized root raised cosine filter in the time domain
 T = 1/Fsymbol;
 
 Delta_t = 1/Fsampling;
