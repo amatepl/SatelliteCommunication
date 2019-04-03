@@ -21,6 +21,7 @@ BER = zeros(length(Nbps),length(Eb_No_dB));
 
 % Filter that is used :
 filter = RRCFilter(beta,Fsymbol,Fsampling, RRCTaps);
+figure();
 for j = 1:length(Nbps)
     % TX side :
     [symb_tx,signal_tx] = TX(bit_tx, filter,Nbps(j), M);
@@ -32,7 +33,15 @@ for j = 1:length(Nbps)
         errors = abs(bit_rx - bit_tx);
         BER(j,i) = sum(errors)/Nb;
     end
+    semilogy(Eb_No_dB,BER(j,:));
+    hold on;
 end
+title('BER of an ideal channel in satellite communication with AWGN PAM');
+legend('BPSK','QPSK','QAM16','QAM64');
+xlabel('Eb/N0 (dB)');
+ylabel('BER');
+grid on;
+
 
 figure();
 berTheo = berawgn(Eb_No_dB,'pam',2^Nbps(1));
