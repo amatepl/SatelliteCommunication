@@ -40,14 +40,14 @@ h = ifft(ifftshift(H),'symmetric');
 h = fftshift(h);
 h = h/max(sqrt(conv(h,h)));
 
-figure();
-plot(freqGrid,H)
-xlabel('frequency (Hz)')
-ylabel('Amplitude')
-title('Frequency response of the RRC filter')
-
-figure();
-plot(t,h)
-xlabel('time (s)')
-ylabel('Amplitude')
-title('Time response of the RRC filter with normalization')
+% figure();
+% plot(freqGrid,H)
+% xlabel('frequency (Hz)')
+% ylabel('Amplitude')
+% title('Frequency response of the RRC filter')
+% 
+% figure();
+% plot(conv(h,h))
+% xlabel('time (s)')
+% ylabel('Amplitude')
+% title('Time response of the RC filter with normalization')

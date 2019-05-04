@@ -10,7 +10,7 @@ beta = 0.3;
 % !!! WE MUST HAVE ENOUGH TAPS,HOWEVER ERROR OCCURS EVEN WITHOUT NOISE !!!
 RRCTaps = 155;
 % Upsampling factor 
-M = 4;
+M = 2;
 Fsampling = M*Fsymbol;
 Nb = 600000;
 % Creation of a random sequence of bits for the moment (row vector)
