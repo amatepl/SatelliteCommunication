@@ -10,9 +10,6 @@ function [symb_tx] = mapping(bit_tx,Nbps,modulation)
 
 Nsymb = size(bit_tx,1)/Nbps; % Number of symbols
 
-% Returns the Nbps by Nsymb matrix transpose.
-% Ex : 100 elements of 2 bits per symbol return a
-%      500 rows matrix of two columns
 bit_tx2 = reshape(bit_tx,Nbps,Nsymb)';
 
 switch modulation,
@@ -26,7 +23,7 @@ switch modulation,
         end
 
         % Binary to integer
-        int_tx = bi2de(fliplr(mapp_tx)); %converts a binary row vector to a nonnegative decimal integer. 
+        int_tx = bi2de(fliplr(mapp_tx)); %
 
         % Integer to symbol
         sigma = sqrt(sum(([0:2^Nbps-1]-(2^Nbps-1)/2).^2)/2^Nbps); 
@@ -71,6 +68,6 @@ switch modulation,
        
         
         % COMPLEX SYMBOL
-        symb_tx = symb_txI + 1i*symb_txQ;
+        symb_tx = symb_txI + j*symb_txQ;
        
 end
