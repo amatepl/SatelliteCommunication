@@ -10,6 +10,9 @@ function [symb_tx] = mapping(bit_tx,Nbps,modulation)
 
 Nsymb = size(bit_tx,1)/Nbps; % Number of symbols
 
+% Returns the Nbps by Nsymb matrix transpose.
+% Ex : 100 elements of 2 bits per symbol return a
+%      500 rows matrix of two columns
 bit_tx2 = reshape(bit_tx,Nbps,Nsymb)';
 
 switch modulation,
@@ -68,6 +71,6 @@ switch modulation,
        
         
         % COMPLEX SYMBOL
-        symb_tx = symb_txI + j*symb_txQ;
+        symb_tx = symb_txI + 1i*symb_txQ;
        
 end
