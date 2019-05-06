@@ -25,8 +25,8 @@ coderate = 1/2;  % ex : 1/2 => 1 check bit for 1 bit
 % bits transmitted per block = number of columns in the parity check matrix
 codesize = blocksize/coderate;
 
-Nbps = 1;
-Eb_No_dB = 2:1:5;
+Nbps = 4;
+Eb_No_dB = 2:1:15;
 Nb = Nbps*1e3*blocksize;
 
 %% LDPC Encoder and generation of the parity check matrix
@@ -56,21 +56,19 @@ for j = 1:length(Eb_No_dB)
 
         % RX side :
         [symb_rx,bits_rx] = RX(signal_rx, filter,Nbps, M, RRCTaps);
-        LDPC_bits_rx(:,k) = tanner(bits_rx,Hnew,2);
+        LDPC_bits_rx(:,k) = tanner(bits_rx,Hnew,1);
     end
     bits_rx = LDPC_bits_rx(:);
     error= abs(bits_tx-bits_rx);
     BER(j) = 1e6*(sum(error)*coderate)*1/Nb*1e-6;
 end
 figure();
-berTheo = berawgn(Eb_No_dB,'pam',2);
-semilogy(Eb_No_dB,BER_coded,'-o');
+berTheo = berawgn(Eb_No_dB,'qam',16);
+semilogy(Eb_No_dB,BER,'-o');
 hold on;
-% semilogy(Eb_No_dB,BER_uncoded,'-o');
-% hold on;
 semilogy(Eb_No_dB,berTheo,'-o');
-title('BER of an ideal channel in satellite communication with AWGN PAM');
-legend('LDPC hard decoding coded 20 it','Theorical','Location', 'Best');
+title('BER of an ideal channel in satellite communication with AWGN QAM16');
+legend('LDPC hard decoding coded 1 it','Theorical','Location', 'Best');
 xlabel('Eb/N0 (dB)');
 ylabel('BER');
 grid on;
