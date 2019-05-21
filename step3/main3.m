@@ -1,4 +1,6 @@
 clear; clc; close all;
+addpath('../step1');
+addpath('../');
 % Simulation parameters
 Fsymbol = 2e6;
 M = 2;
