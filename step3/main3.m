@@ -1,6 +1,6 @@
 clear; clc; close all;
 addpath('../step1');
-addpath('../');
+addpath('../shared');
 % Simulation parameters
 Fsymbol = 2e6;
 M = 2;
@@ -10,8 +10,8 @@ beta = 0.3;
 Nbps = [1 2 4 6];
 
 fc=2e9;
-
-Nb = 600000;
+shift=20;   % 0, 4, 10, 20 (0, 0.02, 0.05, 0.1)
+Nb = 60000;
 % Creation of a random sequence of bits for the moment (row vector)
 bit_tx = randi([0 1],Nb, 1);
 
@@ -25,7 +25,7 @@ filter = RRCFilter(beta,Fsymbol,Fsampling, RRCTaps);
 figure;
 for j = 1:length(Nbps)
     % TX side :
-    [~,signal_tx] = TX(bit_tx, filter,Nbps(j), M);
+    [symb_tx,signal_tx] = TX(bit_tx, filter,Nbps(j), M);
     for i = 1:length(Eb_No_dB)
         % Add noise on the signal :
         signal_rx = noise(signal_tx, Eb_No_dB(i),Fsampling,Nb);
@@ -40,7 +40,7 @@ for j = 1:length(Nbps)
         t = (0:length(symb)-1)./Fsampling;
         symb = (symb .* exp(1j.* (-2*pi*df .* t'))).*exp(-1j*(RRCTaps-1)/2/Fsampling*2*pi*df);
         
-        symb_rx = downsample(symb,M);
+        symb_rx = downsample(symb(1+shift:end,1),M);
 
         if Nbps(j) > 1 
             bit_rx = demapping(symb_rx, Nbps(j), 'qam');
