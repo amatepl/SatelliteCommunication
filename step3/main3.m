@@ -1,6 +1,6 @@
 clear; clc; close all;
 addpath('../step1');
-addpath('../');
+addpath('../shared');
 
 % Simulation parameters
 Fsymbol = 2e6;
@@ -22,7 +22,8 @@ bit_tx = randi([0 1],Nb, 1);
 Eb_No_dB = 1:4:16;
 BER = zeros(length(Nbps),length(Eb_No_dB));
 
-df = (1e-6*fc)*25; % ppm
+%df = (1e-6*fc)*25; % ppm
+df= 0;
 phi=pi/16;
 % Nyquist
 filter = RRCFilter(beta,Fsymbol,Fsampling, RRCTaps);

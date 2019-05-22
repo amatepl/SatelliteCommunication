@@ -14,7 +14,7 @@ for n=1:length(epsilon)-1
     % interpolate  =    [y(n - 0.5) y(n)]
     % corrected(n) =    y(n-1)
     
-    interpolate = interp1(1:ratio+1,samples(ratio*(n-1)+1:ratio*n+1),[ratio/2+1 ratio+1],'linear');
+    interpolate = interp1(1:ratio+1,samples(ratio*(n-1)+1:ratio*n+1),[ratio/2+1 ratio+1] - epsilon(n),'linear');
     
     corrected(n+1) = interpolate(2);
     epsilon(n+1) = epsilon(n) + 2*k*real(interpolate(1)*(conj(corrected(n+1)) - conj(corrected(n))));
