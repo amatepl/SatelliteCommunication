@@ -15,11 +15,11 @@ Fgardner = Fsampling/2;
 
 fc=2e9;
 
-Nb = 60000;
+Nb = 600000;
 % Creation of a random sequence of bits for the moment (row vector)
 bit_tx = randi([0 1],Nb, 1);
 
-Eb_No_dB = 1:2:16;
+Eb_No_dB = 1:4:16;
 copies = ones(1,length(Eb_No_dB));
 BER = zeros(length(Nbps),length(Eb_No_dB));
 
@@ -48,9 +48,9 @@ j=1;
         % RX side :
         %up_symb_rx = zeros(size(signal_cfo));
         symb = zeros(Nb*M/Nbps,length(Eb_No_dB));
-        parfor n = 1:length(Eb_No_dB)
+        parfor n = length(Eb_No_dB)
             up_symb_rx = conv(signal_cfo(:,n),filter','full');
-            symb(:,n) = up_symb_rx(RRCTaps:end-RRCTaps+1);
+            symb(:,n) = up_symb_rx(RRCTaps:end-RRCTaps+1,:);
         end
         
         %symb = up_symb_rx(RRCTaps:end-RRCTaps+1,:);
@@ -73,14 +73,14 @@ j=1;
         parfor i = 1:length(Eb_No_dB)
             l_bit_rx = zeros(length(Eb_No_dB),1);
             if Nbps(j) > 1 
-                l_bit_rx = demapping(symb_rx2(:,i), Nbps(j), 'qam');
+                l_bit_rx = demapping(symb_rx2, Nbps(j), 'qam');
             else 
-                l_bit_rx = demapping(symb_rx2(:,i), 1, 'pam');
+                l_bit_rx = demapping(symb_rx2, 1, 'pam');
             end 
             bit_rx(:,i) = l_bit_rx;
         end
-        errors = abs(bit_rx - kron(bit_tx,ones(1,length(Eb_No_dB))));
-        BER(j,:) = sum(errors)/Nb;
+        errors = abs(bit_rx - kron(bit_tx,ones(1,length)));
+        BER(j,i) = sum(errors)/Nb;
 %    end
     semilogy(Eb_No_dB,BER(j,:));
     hold on;
@@ -94,14 +94,14 @@ hold on;
 berTheo1 = berawgn(Eb_No_dB,'pam',2^Nbps(1));
 semilogy(Eb_No_dB,berTheo1,'-o');
 hold on;
-% berTheo2 = berawgn(Eb_No_dB,'qam',2^Nbps(2));
-% semilogy(Eb_No_dB,berTheo2,'-o');
-% hold on;
-% berTheo3 = berawgn(Eb_No_dB,'qam',2^Nbps(3));
-% semilogy(Eb_No_dB,berTheo3,'-o');
-% hold on;
-% berTheo4 = berawgn(Eb_No_dB,'qam',2^Nbps(4));
-% semilogy(Eb_No_dB,berTheo4,'-o');
+berTheo2 = berawgn(Eb_No_dB,'qam',2^Nbps(2));
+semilogy(Eb_No_dB,berTheo2,'-o');
+hold on;
+berTheo3 = berawgn(Eb_No_dB,'qam',2^Nbps(3));
+semilogy(Eb_No_dB,berTheo3,'-o');
+hold on;
+berTheo4 = berawgn(Eb_No_dB,'qam',2^Nbps(4));
+semilogy(Eb_No_dB,berTheo4,'-o');
 ylim([10e-5 1]);
 %legend('BPSK theo','QPSK theo','QAM16 theo','QAM64 theo');
 

@@ -8,10 +8,10 @@ size_samples = size(samples);
 %epsilon = zeros(1,ceil(length(samples)/ratio));
 epsilon = zeros(size_samples(2),ceil(size_samples(1)/ratio));
 corrected = zeros(size(epsilon));
-%corrected(1,:) = samples(1,:);
+corrected(1,:) = samples(1,:);
 samples = [samples; zeros(1,size_samples(2))];          % 0 is added at the and to allow extrapolation.
 
-
+size_epsilon = size(epsilon);
 parfor j = 1:size_samples(2)
     l_epsilon = zeros(1,ceil(size_samples(1)/ratio));
     l_corrected = zeros(1,ceil(size_samples(1)/ratio));
@@ -34,13 +34,11 @@ parfor j = 1:size_samples(2)
 
         %interpolate = interp1(1:ratio+1,samples(ratio*(n-1)+1:ratio*n+1),[ratio/2+1 ratio+1] - epsilon(n),'linear');
 
-        l_corrected(n+1) = interpolate(2);
-        l_epsilon(n+1) = l_epsilon(n) + 2*k*real(interpolate(1)*(conj(l_corrected(n+1)) - conj(l_corrected(n))));
+        corrected(j,n+1) = interpolate(2);
+        epsilon(j,n+1) = epsilon(j,n) + 2*k*real(interpolate(1)*(conj(corrected(j,n+1)) - conj(corrected(j,n))));
         %disp(num2str(epsilon(n+1)));
         %disp(num2str(2*k*real(interpolate(1)*(conj(corrected(n+1)) - conj(corrected(n))))));
     end
-    corrected(j,:) = l_corrected;
-    epsilon(j,:) = l_epsilon;
 end
 epsilon = epsilon./ratio;
 

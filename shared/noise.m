@@ -9,18 +9,25 @@ function signal_rx = noise(signal_tx,Eb_No_dB,Fsampling,Nb)
 % - Nb : Number of bits
 % OUTPUTS :
 % - signal_rx : signal which arrives at the receiver
+
+
 Eb_No = 10.^(Eb_No_dB/10);
-signal_energy = (trapz(abs(signal_tx).^2))*(1/Fsampling);
+signal_energy = (trapz(abs(signal_tx(:,1)).^2))*(1/Fsampling);
 Eb = signal_energy/Nb;
 Eb = Eb/2;
 No = Eb./Eb_No;
-noise_power = 2*No*Fsampling;
+size_signal = size(signal_tx);
+
+% Matrix with all the columns = signal_tx and number of columns = length(Eb_No_dB)
+clone = ones(size_signal(1),1);
+noise_power = kron(2*No*Fsampling,clone);       % lines(signla)xlength(Eb_No_dB)
+
 %noise_power = kron(noise_power,ones(length(signal_tx),1));
 
-noise = randn(length(signal_tx),1)+1i*randn(length(signal_tx),1);
+%noise = randn(length(signal_tx),1)+1i*randn(length(signal_tx),1);
+noise = randn(size(noise_power))+1i*randn(size(noise_power));
 %noise = kron(noise,ones([1,length(No)]));
 
 noise = sqrt(noise_power./2).*noise;
 
-signal_tx = kron(signal_tx,ones(1,length(No)));
 signal_rx = signal_tx + noise;
