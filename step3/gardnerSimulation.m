@@ -91,12 +91,9 @@ end
     means = means/Nbexp;
     stdv = sqrt(stdv/Nbexp - means.^2);
     X = kron([1:step:size(means,2)].',copies);
-    %current = plot(1:step:size(means,2),means(ii,1:step:end));
     current = plot(X,means(:,1:step:end).');
     
     c = get(current, 'color');
-%     plot(1:step:size(means,2),means(ii,1:step:end) + stdv(ii,1:step:end),':','Color',c)
-%     plot(1:step:size(means,2),means(ii,1:step:end) - stdv(ii,1:step:end),':','Color',c)
     plot_stdv_up = plot(X,means(:,1:step:end).' + stdv(:,1:step:end).',':','LineWidth',2);
     set(plot_stdv_up,{'color'},c);
     plot_stdv_down = plot(X,means(:,1:step:end).' - stdv(:,1:step:end).',':','LineWidth',2);    
