@@ -54,7 +54,7 @@ for jj = 1:Nbexp
     signal_tx_M =  kron(signal_tx,copies);
 
     % Add noise on the signal :
-    %signal_rx = noise(signal_tx_M, Eb_No_dB,Fsampling,Nb);
+    %signal_rx = noise2(signal_tx_M, Eb_No_dB,Fsampling,Nb);
     signal_rx = signal_tx_M;
     %num = size(signal_rx,1);
     % Add CFO

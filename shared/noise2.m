@@ -1,4 +1,4 @@
-function signal_rx = noise(signal_tx,Eb_No_dB,Fsampling,Nb)
+function signal_rx = noise2(signal_tx,Eb_No_dB,Fsampling,Nb)
 % Add an additive Gaussian White noise (AWGN) on the signal inside the
 % channel.
 % INPUTS :
