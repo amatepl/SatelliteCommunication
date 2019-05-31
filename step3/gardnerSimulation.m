@@ -108,58 +108,6 @@ end
     ylabel('Time error (mean +- stdv)');
     grid on;
     
-%     
-%     symb_rx2 = corrected';
-%     bit_rx = zeros(Nb,length(Eb_No_dB));
-%     parfor i = 1:length(Eb_No_dB)
-%         l_bit_rx = zeros(length(Eb_No_dB),1);
-%         if Nbps(j) > 1 
-%             l_bit_rx = demapping(symb_rx2(:,i), Nbps(j), 'qam');
-%         else 
-%             l_bit_rx = demapping(symb_rx2(:,i), 1, 'pam');
-%         end 
-%         bit_rx(:,i) = l_bit_rx;
-%     end
-%     
-%    
-%     
-%     
-%     
-%     
-%     errors = abs(bit_rx - kron(bit_tx,ones(1,length(Eb_No_dB))));
-%     BER(j,:) = sum(errors)/Nb;
-% 
-%     semilogy(Eb_No_dB,BER(j,:));
-%     hold on;
-% %end
-% title('Effect of CFO on BER (ISI Only)');
-% legend('BPSK','QPSK','QAM16','QAM64');
-% xlabel('Eb/N0 (dB)');
-% ylabel('BER');
-% grid on;
-% hold on;
-% berTheo1 = berawgn(Eb_No_dB,'qam',2^Nbps(1));
-% semilogy(Eb_No_dB,berTheo1,'-o');
-% hold on;
-% berTheo2 = berawgn(Eb_No_dB,'qam',2^Nbps(2));
-% semilogy(Eb_No_dB,berTheo2,'-o');
-% hold on;
-% berTheo3 = berawgn(Eb_No_dB,'qam',2^Nbps(3));
-% semilogy(Eb_No_dB,berTheo3,'-o');
-% hold on;
-% berTheo4 = berawgn(Eb_No_dB,'qam',2^Nbps(4));
-% semilogy(Eb_No_dB,berTheo4,'-o');
-% ylim([10e-5 1]);
-%legend('BPSK theo','QPSK theo','QAM16 theo','QAM64 theo');
-
-% [symb_tx,signal_tx] = TX(bit_tx, filter,2, M);
-% figure;
-% plot(symb_tx,'o');
-% hold on;
-% plot(cfo(signal_rx,df,phi,Fsampling),'x')
-% legend('Emitted symbols', 'phase offset');
-% title('Effect of phase offset pi/16')
-% grid on;
 
 
     
