@@ -15,14 +15,14 @@ RRCTaps = 155;
 M = 2;
 Fsampling = M*Fsymbol;
 Nbps = 1;
-Eb_No_dB = 3:1:4;
+Eb_No_dB = 1:1:16;
 BER = zeros(length(Nbps),length(Eb_No_dB));
 
 % LDPC parameters :
 blocksize = 126;
 coderate = 1/2;
 codesize = blocksize/coderate;
-Nb = Nbps*1e3*blocksize;
+Nb = Nbps*1e1*blocksize;
 maxit = [1,5,10];
 
 for j = 1:length(maxit)
@@ -45,6 +45,7 @@ for j = 1:length(maxit)
         % RX side :
         [symb_rx,bit_rx] = RX(signal_rx, filter,Nbps, M, RRCTaps);
         for k = 0:codesize:length(bit_rx)-codesize
+            %bit_rx(k+1:k+codesize) = decodeProbDomain(bit_rx(k+1:k+codesize), Hnew, No/2, maxit(j));
             bit_rx(k+1:k+codesize) = LDPC(Hnew,bit_rx(k+1:k+codesize).',maxit(j));
         end
         %bit_rx = softLDPC(bit_rx,Hnew,maxit(j));

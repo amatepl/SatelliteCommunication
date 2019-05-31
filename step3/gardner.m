@@ -23,7 +23,7 @@ parfor j = 1:size_samples(2)
 
         interpolate = interp1(1:ratio+1,samples(ratio*(n-1)+1:ratio*n+1,j),[ratio/2+1 ratio+1]- l_epsilon(n),'linear','extrap');
         l_corrected(n+1) = interpolate(2);
-        l_epsilon(n+1) = l_epsilon(n) + 2*k*real(interpolate(1)*(conj(l_corrected(n+1)) - conj(l_corrected(n))));
+        l_epsilon(n+1) = l_epsilon(n) + 2*k(j)*real(interpolate(1)*(conj(l_corrected(n+1)) - conj(l_corrected(n))));
         
     end
     corrected(j,:) = l_corrected;

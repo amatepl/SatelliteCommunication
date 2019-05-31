@@ -1,8 +1,8 @@
 function result = LDPC(H1,bit_piece,maxit)
-% % Test:
+% % % Test:
 % clear all; close all; clc;
 % H1 = [0 1 0 1 1 0 0 1; 1 1 1 0 0 1 0 0; 0 0 1 0 0 1 1 1; 1 0 0 1 1 0 1 0];
-% bit_piece = [1 1 0 1 1 1 0 1];
+% bit_piece = [1 1 1 1 0 1 0 1];
 % maxit = 3;
 [rows,col] = find(H1);
 [r1,c1] = size(H1);
@@ -40,9 +40,15 @@ while (norm(syndrome) ~= 0 && iter < maxit)
             res = 0;
         end %if
         result(i) = res;
-        syndrome = mod(result*H1',2);
-        
-        if (iter < maxit && norm(syndrome) ~= 0)
+    end 
+    syndrome = mod(result*H1',2);
+    
+    if (iter < maxit && norm(syndrome) ~= 0)
+       for i = 1:c1
+            c_nodes_fs = rows(col==i);   % f nodes connected to the c node.
+            H_nodes =  H1(c_nodes_fs,:);   % Rows of H that represents the f nodes.
+            [r2,c2] = size(H_nodes);
+            [rows1,col1] = find(H_nodes);
             A = repmat(result,r2,1);   % Matrix of encoded bits of the same size as the H_nodes.
             v_nodes_c = H_nodes.*A;
             v_nodes_c(:,i) = [];
@@ -74,7 +80,8 @@ while (norm(syndrome) ~= 0 && iter < maxit)
             end 
             result(i) = res;
         end
-    end % for
-    syndrome = mod(result*H1',2);
+        syndrome = mod(result*H1',2);
+    end 
 end
+disp(sprintf('iteration :%d \n', iter));
 result = result.';
