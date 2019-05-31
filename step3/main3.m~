@@ -6,16 +6,17 @@ addpath('../shared');
 Fsymbol = 1e6;
 M = 16;
 Fsampling = M*Fsymbol;
-RRCTaps = 151;
+RRCTaps = 101;
 beta = 0.3;
-Nbps = [6];
+Nbps = [2];
 Fgardner = Fsampling/2;
-k=0.1;
+k=0.4;
 shift = round(0.45*Fsampling/Fsymbol);
 fc=2e9;
 
 Nb = 1000*Nbps;
-
+% Creation of a random sequence of bits for the moment (row vector)
+bit_tx = randi([0 1],Nb, 1);
 
 Eb_No_dB = 4:4:16;
 copies = ones(1,length(Eb_No_dB));
@@ -30,24 +31,13 @@ filter = RRCFilter(beta,Fsymbol,Fsampling, RRCTaps);
 %figure;
 j=1;
 %for j = 1:length(Nbps)
-precision = Nb/Nbps;
-means = zeros(length(df), precision);
-stdv = zeros(length(df), precision);
-step = 20;
-figure('Name','Gardner')
-hold on
-ii =1;
-Nbexp = 25;
-for jj = 1:Nbexp
-    % Creation of a random sequence of bits for the moment (row vector)
-    bit_tx = randi([0 1],Nb, 1);
     % TX side :
     [symb_tx,signal_tx] = TX(bit_tx, filter,Nbps(j), M);
     signal_tx_M =  kron(signal_tx,copies);
 
     % Add noise on the signal :
-    signal_rx = noise(signal_tx_M, Eb_No_dB,Fsampling,Nb);
-    %signal_rx = signal_tx_M;
+    %signal_rx = noise(signal_tx_M, Eb_No_dB,Fsampling,Nb);
+    signal_rx = signal_tx_M;
     %num = size(signal_rx,1);
     % Add CFO
     t = (0:length(signal_rx)-1)./Fsampling;
@@ -64,23 +54,46 @@ for jj = 1:Nbexp
 
     size_symb = size(symb);
     t = (0:size_symb(1)-1)./Fsampling;
-    
     %clear signal_cfo;
+
+%     symb_rx = downsample(symb,M);
     symb_rx = symb;
-    
-    [~, epsilon] = gardner(symb_rx,k,M);
-    samplingerror = (shift - epsilon*Fsampling/Fsymbol)/Fsampling;
-    means(ii,:) = means(ii,:) + samplingerror(end,:);
-    stdv(ii,:) = stdv(ii,:) + samplingerror(end,:).^2;
-end
+    %[corrected, epsilon] = gardner(symb,k,M);
+    symb_rx= downsample(symb_rx, Fsampling/Fgardner);
+    precision = Nb/Nbps;
+%     means = zeros(length(df), precision);
+%     stdv = zeros(length(df), precision);
+%     step = 20;
+    figure('Name','Gardner')
+    hold on
+    ii =1;
+%     Nbexp = 50;
+%     for jj = 1:Nbexp
+%         [~, epsilon] = gardner(symb_rx,k,Fgardner/Fsymbol);
+%         samplingerror = (shift - epsilon*Fsampling/Fsymbol)/Fsampling;
+%         means(ii,:) = means(ii,:) + samplingerror(end,:);
+%         stdv(ii,:) = stdv(ii,:) + samplingerror(end,:).^2;
+%     end
+%     means = zeros(1,20);
+%     stdv = zeros(1,20);
+%     for jj = 1:20
+%         [~, epsilon] = gardner(symb_rx(1:jj*50),k,Fgardner/Fsymbol);
+%         samplingerror = (shift - epsilon*Fsampling/Fsymbol)/Fsampling;
+%         means(jj) = sum(samplingerror(end,:))/(jj*50);
+%         stdv(jj) =  sum(samplingerror(end,:)).^2;
+%     end
     
     means(ii,:) = means(ii,:)/Nbexp;
     stdv(ii,:) = sqrt(stdv(ii,:)/Nbexp - means(ii,:).^2);
     current = plot(1:step:length(means),means(ii,1:step:end));
     c = get(current, 'color');
-    plot(1:step:length(means),means(ii,1:step:end) + stdv(ii,1:step:end),':','Color',c)
-    plot(1:step:length(means),means(ii,1:step:end) - stdv(ii,1:step:end),':','Color',c)
+    plot(1:step:length(means),means(ii,1:step:end) + stdv(ii,1:step:end),':','Color','blue')
+    plot(1:step:length(means),means(ii,1:step:end) - stdv(ii,1:step:end),':','Color','blue')
     
+    current = plot(1:length(means),means);
+    c = get(current, 'color');
+    plot(1:length(means),means + stdv,':','Color','blue')
+    plot(1:step:length(means),means - stdv,':','Color','blue')
     
     
     
