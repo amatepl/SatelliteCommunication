@@ -44,11 +44,9 @@ for j = 1:length(maxit)
         [signal_rx,No] = noise(signal_tx, Eb_No_dB(i),Fsampling,length(bit_tx));
         % RX side :
         [symb_rx,bit_rx] = RX(signal_rx, filter,Nbps, M, RRCTaps);
-        for k = 0:codesize:length(bit_rx)-codesize
-            %bit_rx(k+1:k+codesize) = decodeProbDomain(bit_rx(k+1:k+codesize), Hnew, No/2, maxit(j));
-            bit_rx(k+1:k+codesize) = LDPC(Hnew,bit_rx(k+1:k+codesize).',maxit(j));
-        end
-        %bit_rx = softLDPC(bit_rx,Hnew,maxit(j));
+%         for k = 0:codesize:length(bit_rx)-codesize
+%             bit_rx(k+1:k+codesize) = LDPC(Hnew,bit_rx(k+1:k+codesize).',maxit(j));
+%         end
         errors = abs(bit_rx - bit_tx);    
         BER(j,i) = sum(errors)/length(errors);
     end
