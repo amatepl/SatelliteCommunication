@@ -15,14 +15,14 @@ RRCTaps = 155;
 M = 2;
 Fsampling = M*Fsymbol;
 Nbps = 1;
-Eb_No_dB = 1:1:16;
+Eb_No_dB = 1:1:7;
 BER = zeros(length(Nbps),length(Eb_No_dB));
 
 % LDPC parameters :
 blocksize = 126;
 coderate = 1/2;
 codesize = blocksize/coderate;
-Nb = Nbps*1e1*blocksize;
+Nb = Nbps*1e2*blocksize;
 maxit = [1,5,10];
 
 for j = 1:length(maxit)
