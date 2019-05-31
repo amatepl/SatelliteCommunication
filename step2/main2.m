@@ -1,5 +1,6 @@
+addpath('../shared');
+addpath('../step1');
 clear all; close all;clc;
-%% Definition of the variables
 % 1 MHz cutoff fre-quency
 % 0.3 roll-off factor  
 % Before filtering, the symbol sequence is over-sampled with a factor M >
@@ -13,64 +14,56 @@ RRCTaps = 155;
 % Upsampling factor 
 M = 2;
 Fsampling = M*Fsymbol;
+Nbps = 1;
+Eb_No_dB = 3:1:4;
+BER = zeros(length(Nbps),length(Eb_No_dB));
 
-% we want divide our bit frame into equivalent sub blocks
-blocksize = 128; % = number of rows in the parity check matrix
-% We want a code rate smaller than one 
-coderate = 1/2;  % ex : 1/2 => 1 check bit for 1 bit
-                 %      3/4 => 1 check bit for 3 bits
-                 % if code rate increase => protection against errors
-                 % decreases
-                 
-% bits transmitted per block = number of columns in the parity check matrix
+% LDPC parameters :
+blocksize = 126;
+coderate = 1/2;
 codesize = blocksize/coderate;
-
-Nbps = 4;
-Eb_No_dB = 2:1:15;
 Nb = Nbps*1e3*blocksize;
+maxit = [1,5,10];
 
-%% LDPC Encoder and generation of the parity check matrix
-H = makeLdpc(blocksize,codesize,0,1,3);
-% The bits transmitted are made in blocks
-% Creation of a random sequence of bits for the moment (row vector)
-bit_tx = randi([0 1],blocksize,Nb/blocksize);
-% Generate parity check bits in function of each blocks
-[parity_bit,Hnew] = makeParityChk(bit_tx,H,1);
-LDPC_bits_tx = [parity_bit;bit_tx];
-
-%% Filter + noise :
-% Filter that is used :
-filter = RRCFilter(beta,Fsymbol,Fsampling, RRCTaps);
-
-BER = zeros(1,length(Eb_No_dB));
-bits_tx = LDPC_bits_tx(:);
-
-for j = 1:length(Eb_No_dB)
-    LDPC_bits_rx = zeros(codesize,Nb/blocksize);
-    for k = 1:length(LDPC_bits_rx)
-        % TX side :
-        [symb_tx,signal_tx] = TX(LDPC_bits_tx(:,k), filter,Nbps, M);
-
+for j = 1:length(maxit)
+    % Parity check matrix
+    H = makeLdpc(blocksize,codesize,0,1,4);
+    block_bit = randi([0 1],Nb,1);
+    save = block_bit;
+    block_bit = reshape(block_bit,blocksize,Nb/blocksize);
+    [parity_bit,Hnew] = makeParityChk(block_bit,H,1);
+    bit_tx = [parity_bit;block_bit];
+    bit_tx = bit_tx(:);
+    % Filter that is used :
+    filter = RRCFilter(beta,Fsymbol,Fsampling, RRCTaps);
+    % TX side :
+    [symb_tx,signal_tx] = TX(bit_tx, filter,Nbps, M);
+    tic;
+    for i = 1:length(Eb_No_dB)
         % Add noise on the signal :
-        signal_rx = noise(signal_tx, Eb_No_dB(j),Fsampling,codesize);
-
+        [signal_rx,No] = noise(signal_tx, Eb_No_dB(i),Fsampling,length(bit_tx));
         % RX side :
-        [symb_rx,bits_rx] = RX(signal_rx, filter,Nbps, M, RRCTaps);
-        LDPC_bits_rx(:,k) = tanner(bits_rx,Hnew,1);
+        [symb_rx,bit_rx] = RX(signal_rx, filter,Nbps, M, RRCTaps);
+        for k = 0:codesize:length(bit_rx)-codesize
+            bit_rx(k+1:k+codesize) = LDPC(Hnew,bit_rx(k+1:k+codesize).',maxit(j));
+        end
+        %bit_rx = softLDPC(bit_rx,Hnew,maxit(j));
+        errors = abs(bit_rx - bit_tx);    
+        BER(j,i) = sum(errors)/length(errors);
     end
-    bits_rx = LDPC_bits_rx(:);
-    error= abs(bits_tx-bits_rx);
-    BER(j) = 1e6*(sum(error)*coderate)*1/Nb*1e-6;
+    toc;
 end
+
 figure();
-berTheo = berawgn(Eb_No_dB,'qam',16);
-semilogy(Eb_No_dB,BER,'-o');
-hold on;
+berTheo = berawgn(Eb_No_dB,'pam',2^Nbps);
+for j = 1:length(maxit)
+    semilogy(Eb_No_dB,BER(j,:),'-o');
+    hold on;
+end
 semilogy(Eb_No_dB,berTheo,'-o');
-title('BER of an ideal channel in satellite communication with AWGN QAM16');
-legend('LDPC hard decoding coded 1 it','Theorical','Location', 'Best');
+title('BER for hard decoding of PAM modulation');
+legend('Simulation 1 it','Simulation 5 it','Simulation 10 it','Theorical');
 xlabel('Eb/N0 (dB)');
 ylabel('BER');
 grid on;
-
 

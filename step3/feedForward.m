@@ -1,17 +1,29 @@
-function [pilPos deltaF] = feedForward(y,pilot,N,K,fsymb)
-    nmax = 200;
-    D = zeros(K,nmax);
-    y_con = conj(y);
-    for k = 1:K
-        for l = k:N-1
-            for n = 1:nmax
-                y1 = y(n+l).*pilot(l+1);
-                y2 = conj(y(n+l-k).*pilot(l-k+1));
-                D(k,n) = D(k,n)+y1.*y2;
+function [est_pil, est_cfo] = feedForward(y,pilot,Tsymb,K)
+    N = length(pilot);
+    L = length(y);
+    D = zeros(K, L-N+1);
+
+    for k = 1 : K
+        for n = 1 : L - N + 1
+            tmp = 0;
+            for l = k : N-1
+                tmp1 = conj(y(n+l)) * pilot(l+1);
+            
+                tmp2 = conj(y(n+l-k)) * pilot(l-k+1);
+            
+                tmp = tmp + tmp1 * conj(tmp2);
             end
-        end
+            D(k,n) = tmp;
+        end 
         D(k,:) = D(k,:)/(N-k);
     end
-    pilPos = max(sum(abs(D)));
-    deltaF = -1/K*sum(fsymb*angle(D(:,pilPos))./(2*pi*(1:K).'));
+
+% Time of arrival estimate
+tmp = sum(abs(D),1);
+[~, est_pil] = max(tmp);
+
+k = (1:K).' ;
+est_cfo = sum(angle(D(k,est_pil))./(2*pi*k*Tsymb), 1);
+est_cfo = - est_cfo/K;
+
 end
